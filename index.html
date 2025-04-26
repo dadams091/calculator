@@ -30,17 +30,17 @@
         let num2 = 0;
         let operator = '';
 
-        const add = (a, b) => a + b;
-        const subtract = (a, b) => a - b;
-        const multiply = (a, b) => a * b;
-        const divide = (a, b) => a / b;
-
         const operate = (operator, num1, num2) => {
             if (operator === '+') return add(num1, num2);
             if (operator === '-') return subtract(num1, num2);
             if (operator === '*') return multiply(num1, num2);
             if (operator === '/') return divide(num1, num2);
         };
+
+        const add = (a, b) => a + b;
+        const subtract = (a, b) => a - b;
+        const multiply = (a, b) => a * b;
+        const divide = (a, b) => a / b;
 
         const buttons = document.querySelectorAll('button');
         const display = document.querySelector('#display');
@@ -50,22 +50,26 @@
             button.addEventListener('click', () => {
                 if (button.textContent === 'clear') {
                     display.textContent = '';
-                }
-                else {
+                    // num1 = 0;
+                    // num2 = 0;
+                    // operator = '';
+                } else if (['+', '-', '*', '/'].includes(button.textContent)) {
+                    // Prevent pressing operator after another operator
+                    // Do nothing if the prev character is an operator
+                    if (['+', '-', '*', '/'].includes(display.textContent.slice(-1))) return; 
+                    operator = button.textContent;
+                    num1 = display.textContent;
                     display.textContent += button.textContent;
-                    if (['+','-','*','/'].includes(button.textContent)){
-                        // console.log(display.textContent.length);
-                        referenceIndex = display.textContent.length;
-                        operator = button.textContent;
-                        num1 = display.textContent.slice(0,-1);
-                    }
-                    if (button.textContent === '=') {
-                        num2 = display.textContent.slice(referenceIndex, -1);
-                        console.log(num2);
-                    }
+                } else if (button.textContent === '=') {
+                    num2 = display.textContent.slice(display.textContent.indexOf(operator) + 1);
+                    display.textContent = operate(operator, Number(num1), Number(num2));
+                } else {
+                    display.textContent += button.textContent;
                 }
-            });
-        });
+    });
+});
+
+
     </script>
 </body>
 </html>
