@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Project</title>
+</head>
+<body>
+    <!-- display -->
+    <div id="display">457.34</div>
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
+    <button>4</button>
+    <button>5</button>
+    <button>6</button>
+    <button>7</button>
+    <button>8</button>
+    <button>9</button>
+    <button>0</button>
+    <button>+</button>
+    <button>-</button>
+    <button>*</button>
+    <button>/</button>
+    <button>=</button>
+    <button>clear</button>
+
+    <script>
+        let num1 = 0;
+        let num2 = 0;
+        let operator = '';
+
+        const add = (a, b) => a + b;
+        const subtract = (a, b) => a - b;
+        const multiply = (a, b) => a * b;
+        const divide = (a, b) => a / b;
+
+        const operate = (operator, num1, num2) => {
+            if (operator === '+') return add(num1, num2);
+            if (operator === '-') return subtract(num1, num2);
+            if (operator === '*') return multiply(num1, num2);
+            if (operator === '/') return divide(num1, num2);
+        };
+
+        const buttons = document.querySelectorAll('button');
+        const display = document.querySelector('#display');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (button.textContent === 'clear') {
+                    display.textContent = '';
+                }
+                else {
+                    display.textContent += button.textContent;
+                }
+                
+            });
+        });
+    </script>
+</body>
+</html>
