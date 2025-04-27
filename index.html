@@ -4,70 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator Project</title>
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
-    <!-- display -->
-    <div id="display">457.34</div>
-    <button>1</button>
-    <button>2</button>
-    <button>3</button>
-    <button>4</button>
-    <button>5</button>
-    <button>6</button>
-    <button>7</button>
-    <button>8</button>
-    <button>9</button>
-    <button>0</button>
-    <button>+</button>
-    <button>-</button>
-    <button>*</button>
-    <button>/</button>
-    <button>=</button>
-    <button>clear</button>
+    <div id="container">
+        <!-- display -->
+        <div id="display">457.34</div>
+        <div id="buttons">
+            <button >1</button>
+            <button >2</button>
+            <button >3</button>
+            <button >4</button>
+            <button >5</button>
+            <button >6</button>
+            <button >7</button>
+            <button >8</button>
+            <button >9</button>
+            <button >0</button>
+            <button >.</button>
+            <button>+</button>
+            <button>-</button>
+            <button>*</button>
+            <button>/</button>
+            <button>=</button>
+            <button>←</button>
+            <button>clear</button>
+        </div>
+    </div>
 
     <script>
         let num1 = 0;
         let num2 = 0;
         let operator = '';
 
+        const buttons = document.querySelectorAll('button');
+        const display = document.querySelector('#display');
+        let referenceIndex = 0;
+        let isResult = false; // Track if the result is shown
+
+
+        const add = (a, b) => parseFloat((a + b).toFixed(5));
+        const subtract = (a, b) => parseFloat((a - b).toFixed(5));
+        const multiply = (a, b) => parseFloat((a * b).toFixed(5));
+        const divide = (a, b) => {
+            if (b === 0) return 'What are you doing?';
+            return parseFloat((a / b).toFixed(5));
+        }
+
         const operate = (operator, num1, num2) => {
             if (operator === '+') return add(num1, num2);
             if (operator === '-') return subtract(num1, num2);
             if (operator === '*') return multiply(num1, num2);
-            if (operator === '/') return divide(num1, num2);
+            if (operator === '/') {
+                
+                return divide(num1, num2);
+            }
         };
 
-        const add = (a, b) => a + b;
-        const subtract = (a, b) => a - b;
-        const multiply = (a, b) => a * b;
-        const divide = (a, b) => a / b;
-
-        const buttons = document.querySelectorAll('button');
-        const display = document.querySelector('#display');
-        let referenceIndex = 0;
+        function clear() {
+            display.textContent = '';
+                    operator = '';
+                    num1 = '';
+                    num2 = '';
+        }
 
         buttons.forEach((button) => {
             button.addEventListener('click', () => {
                 if (button.textContent === 'clear') {
-                    display.textContent = '';
-                    // num1 = 0;
-                    // num2 = 0;
-                    // operator = '';
+                    clear();
+                    isResult = false;
                 } else if (['+', '-', '*', '/'].includes(button.textContent)) {
-                    // Prevent pressing operator after another operator
-                    // Do nothing if the prev character is an operator
-                    if (['+', '-', '*', '/'].includes(display.textContent.slice(-1))) return; 
+                    if ((['+', '*', '/'].includes(button.textContent) && display.textContent.length === 0) || 
+                    ['+', '-', '*', '/'].includes(display.textContent.slice(-1))) return;
+
+                    if (operator) {
+                        num2 = display.textContent.slice(display.textContent.indexOf(operator) + 1);
+                        display.textContent = operate(operator, Number(num1), Number(num2));
+                    }
                     operator = button.textContent;
                     num1 = display.textContent;
-                    display.textContent += button.textContent;
+                    display.textContent += operator;
+                    isResult = false; // Reset after operator
                 } else if (button.textContent === '=') {
+                    if (!operator) return;
                     num2 = display.textContent.slice(display.textContent.indexOf(operator) + 1);
                     display.textContent = operate(operator, Number(num1), Number(num2));
+                    operator = '';
+                    isResult = true; // Mark result as displayed
+                } else if (button.textContent === '.') {
+                    //Prevent more than 1 dec point per number
+                    // Check if num2 exists and has a decimal
+                    if (operator && !num2.includes('.')) {
+                        display.textContent += '.';
+                        num2 += '.'; // Add decimal to num2
+                    } else if (!operator && !num1.includes('.')) {
+                        display.textContent += '.';
+                        num1 += '.'; // Add decimal to num1 
+                    } 
+
+                } else if (button.textContent === '←') {    
+                    display.textContent = display.textContent.slice(0, -1); // Remove last character
+                    if (operator) {
+                        // If operator still exists, update num2
+                        const operatorIndex = display.textContent.indexOf(operator);
+                        if (operatorIndex === -1) {
+                            // If operator is removed, reset num2
+                            operator = '';
+                            num2 = '';
+                            num1 = display.textContent;
+                        } else {
+                            num2 = display.textContent.slice(operatorIndex + 1); // Update num2 after operator
+                        }
+                    } else {
+                        num1 = display.textContent; // Update num1
+                    }
                 } else {
-                    display.textContent += button.textContent;
+                    if (isResult) {
+                        display.textContent = button.textContent; // Start new calculation
+                        isResult = false; // Reset the result flag
+                    } else {
+                        display.textContent += button.textContent; // Append digit
+                    }
                 }
-    });
-});
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            event.preventDefault(); // Prevent default behavior (focus change)
+            let key = event.key;
+
+            if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.', '+', '-', '*', '/', '=', 'Backspace', 'Enter'].includes(key)) {
+                console.log(key);
+                if (key === 'Enter') key = '=';
+                const button = Array.from(buttons).find(btn => btn.textContent === key || (key === 'Backspace' && btn.textContent === '←'));
+                if (button) button.click();
+            }
+        })
+
+
 
 
     </script>
