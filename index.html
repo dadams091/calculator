@@ -7,29 +7,43 @@
     <link href="style.css" rel="stylesheet">
 </head>
 <body>
-    <div id="container">
+    <div id="calc">
         <!-- display -->
-        <div id="display">457.34</div>
-        <div id="buttons">
-            <button >1</button>
-            <button >2</button>
-            <button >3</button>
-            <button >4</button>
-            <button >5</button>
-            <button >6</button>
-            <button >7</button>
-            <button >8</button>
-            <button >9</button>
-            <button >0</button>
-            <button >.</button>
-            <button>+</button>
-            <button>-</button>
-            <button>*</button>
-            <button>/</button>
-            <button>=</button>
-            <button>←</button>
-            <button>clear</button>
+        <div id="display">0</div>
+        <div id="keypad">
+            <div class="row">
+                <button >7</button>
+                <button >8</button>
+                <button >9</button>
+                <button class="nonNum" id="arrow">←</button>
+                <button class="nonNum" id="clear">clear</button>
+            </div>
+            <div class="row">
+                <button >4</button>
+                <button >5</button>
+                <button >6</button>
+                <button class="nonNum">×</button>
+                <button class="nonNum">/</button>
+            </div>
+            <div class="row">
+                <button >1</button>
+                <button >2</button>
+                <button >3</button>
+                <button class="nonNum">+</button>
+                <button class="nonNum">-</button>
+            </div>
+            <div class="row">
+                <button id="zero">0</button>
+                <button class="nonNum">.</button>
+                <button class="nonNum">=</button>
+            </div>
+
+
+
         </div>
+            
+            
+        
     </div>
 
     <script>
@@ -45,7 +59,7 @@
 
         const add = (a, b) => parseFloat((a + b).toFixed(5));
         const subtract = (a, b) => parseFloat((a - b).toFixed(5));
-        const multiply = (a, b) => parseFloat((a * b).toFixed(5));
+        const multiply = (a, b) => parseFloat((a *  b).toFixed(5));
         const divide = (a, b) => {
             if (b === 0) return 'What are you doing?';
             return parseFloat((a / b).toFixed(5));
@@ -54,7 +68,7 @@
         const operate = (operator, num1, num2) => {
             if (operator === '+') return add(num1, num2);
             if (operator === '-') return subtract(num1, num2);
-            if (operator === '*') return multiply(num1, num2);
+            if (operator === '×') return multiply(num1, num2);
             if (operator === '/') {
                 
                 return divide(num1, num2);
@@ -73,9 +87,9 @@
                 if (button.textContent === 'clear') {
                     clear();
                     isResult = false;
-                } else if (['+', '-', '*', '/'].includes(button.textContent)) {
-                    if ((['+', '*', '/'].includes(button.textContent) && display.textContent.length === 0) || 
-                    ['+', '-', '*', '/'].includes(display.textContent.slice(-1))) return;
+                } else if (['+', '-', '×', '/'].includes(button.textContent)) {
+                    if ((['+', '×', '/'].includes(button.textContent) && display.textContent.length === 0) || 
+                    ['+', '-', '×', '/'].includes(display.textContent.slice(-1))) return;
 
                     if (operator) {
                         num2 = display.textContent.slice(display.textContent.indexOf(operator) + 1);
@@ -133,7 +147,7 @@
             event.preventDefault(); // Prevent default behavior (focus change)
             let key = event.key;
 
-            if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.', '+', '-', '*', '/', '=', 'Backspace', 'Enter'].includes(key)) {
+            if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.', '+', '-', '×', '/', '=', 'Backspace', 'Enter'].includes(key)) {
                 console.log(key);
                 if (key === 'Enter') key = '=';
                 const button = Array.from(buttons).find(btn => btn.textContent === key || (key === 'Backspace' && btn.textContent === '←'));
